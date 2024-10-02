@@ -10,11 +10,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type User struct {
-	Id    int    `json:"id"`
-	Name  string `json:name`
-	Email string `json:email`
-}
 
 func main() {
 	//connect to database
@@ -35,9 +30,3 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8000", jsonContentTypeMiddleware(router)))
 }
 
-func jsonContentTypeMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		next.ServeHTTP(w, r)
-	})
-}
