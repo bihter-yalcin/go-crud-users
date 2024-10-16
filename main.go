@@ -1,32 +1,39 @@
 package main
 
 import (
-	"database/sql"
+	"api/config"
+	"api/controller"
+	"api/repository"
+	"api/service"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
-
 func main() {
-	//connect to database
-	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	// Connect to the database
+	db, err := config.ConnectDB()
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
+	// Initialize repository, service, and controller
+	userRepository := repository.NewUserRepository(db)
+	userService := service.NewUserService(userRepository)
+	userController := controller.NewUserController(userService)
+
 	//To be able to handle different requests -- create router -- mux
 	router := mux.NewRouter()
-	router.HandleFunc("/users", getUsers(db)).Methods("GET")
-	router.HandleFunc("users/{id}", getUser(db)).Methods("GET")
-	router.HandleFunc("/users", createUser(db)).Methods("POST")
-	router.HandleFunc("/users/{id}", updateUser(db)).Methods("PUT")
-	router.HandleFunc("/users/{id}", deleteUser(db)).Methods("DELETE")
+	router.HandleFunc("/users", userController.GetAllUsers).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8000", jsonContentTypeMiddleware(router)))
+	//router.HandleFunc("/users", getUsers(db)).Methods("GET")
+	//router.HandleFunc("users/{id}", getUser(db)).Methods("GET")
+	//router.HandleFunc("/users", createUser(db)).Methods("POST")
+	//router.HandleFunc("/users/{id}", updateUser(db)).Methods("PUT")
+	//router.HandleFunc("/users/{id}", deleteUser(db)).Methods("DELETE")
+
+	log.Fatal(http.ListenAndServe(":8000", router))
 }
-
