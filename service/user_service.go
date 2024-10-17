@@ -16,3 +16,19 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 func (service *UserService) GetAllUsers() ([]models.User, error) {
 	return service.Repo.GetAllUsers()
 }
+
+func (service *UserService) GetUserByID(id int) (*models.User, error) {
+	return service.Repo.GetUserByID(id)
+}
+
+func (service UserService) CreateUser(user *models.User) error {
+	return service.Repo.CreateUser(user)
+}
+
+func (service UserService) UpdateUser(user *models.User) error {
+	return service.Repo.UpdateUser(user)
+}
+
+func (service UserService) DeleteUser(id int) error {
+	return service.Repo.DeleteUser(id)
+}
