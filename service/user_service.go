@@ -29,8 +29,12 @@ func (service *UserService) CreateUser(user *models.User) (*models.User, error) 
 	return user, nil
 }
 
-func (service UserService) UpdateUser(user *models.User) error {
-	return service.Repo.UpdateUser(user)
+func (service UserService) UpdateUser(updatedUser *models.User) (*models.User, error) {
+	err := service.Repo.UpdateUser(updatedUser)
+	if err != nil {
+		return nil, err
+	}
+	return updatedUser, nil
 }
 
 func (service UserService) DeleteUser(id int) error {
