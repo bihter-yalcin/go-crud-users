@@ -67,3 +67,9 @@ func (controller *UserController) CreateUser(w http.ResponseWriter, r *http.Requ
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdUser)
 }
+
+func (controller *UserController) UpdateUser(w http.ResponseWriter, r *http.Request) {
+}
+
+func (controller *UserController) DeleteUser(w http.ResponseWriter, r *http.Request) {
+}
