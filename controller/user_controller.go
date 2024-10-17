@@ -1,9 +1,13 @@
 package controller
 
 import (
+	models "api/model"
 	"api/service"
 	"encoding/json"
 	"net/http"
+	"strconv"
+
+	mux "github.com/gorilla/mux"
 )
 
 type UserController struct {
@@ -22,4 +26,44 @@ func (controller *UserController) GetAllUsers(w http.ResponseWriter, r *http.Req
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
+}
+
+func (controller *UserController) GetUserByID(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+
+	user, err := controller.UserService.GetUserByID(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
+}
+
+func (controller *UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
+	var newUser models.User
+
+	err := json.NewDecoder(r.Body).Decode(&newUser)
+	if err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	createdUser, err := controller.UserService.CreateUser(&newUser)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(createdUser)
 }
