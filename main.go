@@ -20,6 +20,11 @@ func main() {
 	}
 	defer db.Close()
 
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY,name TEXT, email TEXT)")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Initialize repository, service, and controller
 	userRepository := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepository)
