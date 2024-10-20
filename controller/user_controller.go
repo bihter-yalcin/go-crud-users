@@ -69,13 +69,29 @@ func (controller *UserController) CreateUser(w http.ResponseWriter, r *http.Requ
 }
 
 func (controller *UserController) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	var updatedUser *models.User
 
-	err := json.NewDecoder(r.Body).Decode(&updatedUser)
+	var updatedUser *models.User
+	vars := mux.Vars(r)
+	userID := vars["id"]
+
+	if userID == "" {
+		http.Error(w, "User ID is required", http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.Atoi(userID)
+	if err != nil {
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewDecoder(r.Body).Decode(&updatedUser)
 	if err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
+
+	updatedUser.ID = id
 
 	updatedUser, err = controller.UserService.UpdateUser(updatedUser)
 	if err != nil {

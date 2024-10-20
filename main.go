@@ -35,7 +35,7 @@ func main() {
 	router.HandleFunc("/users", userController.GetAllUsers).Methods("GET")
 	router.HandleFunc("/users/{id}", userController.GetUserByID).Methods("GET")
 	router.HandleFunc("/users", userController.CreateUser).Methods("POST")
-	router.HandleFunc("users/{id}", userController.UpdateUser).Methods("PUT")
+	router.HandleFunc("/users/{id}", userController.UpdateUser).Methods("PUT")
 	router.HandleFunc("/users/{id}", userController.DeleteUser).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":8000", router))

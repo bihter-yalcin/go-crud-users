@@ -53,9 +53,20 @@ func (repo *UserRepository) CreateUser(user *models.User) error {
 }
 
 func (repo *UserRepository) UpdateUser(user *models.User) error {
-	_, err := repo.DB.Exec("UPDATE users SET name = $1, email = $2 WHERE id = $3", user.Name, user.Email, user.ID)
+	result, err := repo.DB.Exec(
+		"UPDATE users SET name = $1, email = $2 WHERE id = $3",
+		user.Name, user.Email, user.ID,
+	)
 	if err != nil {
 		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("no rows affected, user not found")
 	}
 	return nil
 }
