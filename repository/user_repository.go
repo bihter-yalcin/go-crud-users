@@ -24,7 +24,7 @@ func (repo *UserRepository) GetAllUsers() ([]models.User, error) {
 
 	for rows.Next() {
 		var user models.User
-		if err := rows.Scan(&user.ID, &user.Name, &user.Mail); err != nil {
+		if err := rows.Scan(&user.ID, &user.Name, &user.Email); err != nil {
 			return nil, err
 		}
 		users = append(users, user)
@@ -34,7 +34,7 @@ func (repo *UserRepository) GetAllUsers() ([]models.User, error) {
 
 func (repo *UserRepository) GetUserByID(id int) (*models.User, error) {
 	var user models.User
-	err := repo.DB.QueryRow("SELECT id, name, mail FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Mail)
+	err := repo.DB.QueryRow("SELECT id, name, email FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")
@@ -45,7 +45,7 @@ func (repo *UserRepository) GetUserByID(id int) (*models.User, error) {
 }
 
 func (repo *UserRepository) CreateUser(user *models.User) error {
-	err := repo.DB.QueryRow("INSERT INTO users (name, mail) VALUES ($1, $2) RETURNING id", user.Name, user.Mail).Scan(&user.ID)
+	err := repo.DB.QueryRow("INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id", user.Name, user.Email).Scan(&user.ID)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (repo *UserRepository) CreateUser(user *models.User) error {
 }
 
 func (repo *UserRepository) UpdateUser(user *models.User) error {
-	_, err := repo.DB.Exec("UPDATE users SET name = $1, mail = $2 WHERE id = $3", user.Name, user.Mail, user.ID)
+	_, err := repo.DB.Exec("UPDATE users SET name = $1, email = $2 WHERE id = $3", user.Name, user.Email, user.ID)
 	if err != nil {
 		return err
 	}

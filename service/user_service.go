@@ -29,7 +29,7 @@ func (service *UserService) CreateUser(user *models.User) (*models.User, error) 
 	return user, nil
 }
 
-func (service UserService) UpdateUser(updatedUser *models.User) (*models.User, error) {
+func (service *UserService) UpdateUser(updatedUser *models.User) (*models.User, error) {
 	err := service.Repo.UpdateUser(updatedUser)
 	if err != nil {
 		return nil, err
